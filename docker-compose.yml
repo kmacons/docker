@@ -1,0 +1,40 @@
+version: "2"
+
+services:
+  rng:
+    build: rng
+    ports:
+    - "8001:80"
+    environment:
+    - SRVRNGPORT=${SRVRNGPORT}
+    networks:
+      - lab
+  hasher:
+    build: hasher
+    ports:
+    - "8002:80"
+    environment:
+    - SRVHASHERPORT=${SRVHASHERPORT}
+    - SRVRNGPORT=${SRVRNGPORT}
+    networks:
+      - lab
+  webui:
+    build: webui
+    ports:
+    - "8000:80"
+    volumes:
+    - "./webui/files/:/files/"
+    networks:
+      - lab
+  redis:
+    image: redis
+    networks:
+      - lab
+  worker:
+    build: worker
+    environment:
+    - SRVRNGPORT=${SRVRNGPORT}
+    networks:
+      - lab
+networks:
+  lab:
